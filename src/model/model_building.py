@@ -75,7 +75,7 @@ def dump_model(model: GradientBoostingClassifier, file_path: str) -> None:
 def main():
     try:
         n_estimators = load_params()
-        train_path = 'data/processed/train_bow.csv'
+        train_path = 'data/processed/train_tfidf.csv'
 
         x_train, y_train = read_train(train_path)
 

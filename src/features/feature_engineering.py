@@ -60,26 +60,26 @@ def dropnull(data: pd.DataFrame) -> pd.DataFrame:
         return data
 
 
-# apply bag of words
-def bagofwords(max_features: int, x_train: pd.DataFrame, y_train: pd.DataFrame, x_test: pd.DataFrame, y_test: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
+# apply tfidf vectorizer
+def tfidf(max_features: int, x_train: pd.DataFrame, y_train: pd.DataFrame, x_test: pd.DataFrame, y_test: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
     try:
-        logger.debug('applying  bag or words')
-        vectorizer = CountVectorizer(max_features=max_features)
-        x_train_bow = vectorizer.fit_transform(x_train)
-        x_test_bow = vectorizer.transform(x_test)
+        logger.debug('applying  tfidf vectorizer')
+        vectorizer = TfidfVectorizer(max_features=max_features)
+        x_train_tfidf = vectorizer.fit_transform(x_train)
+        x_test_tfidf = vectorizer.transform(x_test)
 
         # make train dataframe
-        train_df = pd.DataFrame(x_train_bow.toarray())
+        train_df = pd.DataFrame(x_train_tfidf.toarray())
         train_df['label'] = y_train
 
         # make test dataframe
-        test_df = pd.DataFrame(x_test_bow.toarray())
+        test_df = pd.DataFrame(x_test_tfidf.toarray())
         test_df['label'] = y_test
 
         return train_df, test_df
-        logger.debug('bow successfully applied')
+        logger.debug('tfidf successfully applied')
     except Exception as e:
-        logger.error('bow unsuccessfull')
+        logger.error('tfidf unsuccessfull')
         print(f"Unexpected error during feature extraction: {e}")
         return pd.DataFrame(), pd.DataFrame()
 
@@ -89,8 +89,8 @@ def save_data(path: str, train_data: pd.DataFrame, test_data: pd.DataFrame) -> N
     try:
         logger.debug('saving the data')
         os.makedirs(path, exist_ok=True)
-        train_data.to_csv(os.path.join(path, 'train_bow.csv'), index=False)
-        test_data.to_csv(os.path.join(path, 'test_bow.csv'), index=False)
+        train_data.to_csv(os.path.join(path, 'train_tfidf.csv'), index=False)
+        test_data.to_csv(os.path.join(path, 'test_tfidf.csv'), index=False)
         logger.debug(f"Data saved successfully in '{path}'")
     
     except Exception as e:
@@ -117,7 +117,7 @@ def main():
         X_test = test_data['content'].values
         y_test = test_data['sentiment'].values
 
-        train_data, test_data = bagofwords(max_features, X_train, y_train, X_test, y_test)
+        train_data, test_data = tfidf(max_features, X_train, y_train, X_test, y_test)
 
         file_path = os.path.join('data', 'processed')
         save_data(file_path, train_data, test_data)

@@ -83,7 +83,7 @@ def store_result(file_path: str, y_test: pd.Series, y_pred: np.ndarray, y_pred_p
 # main
 def main():
     try:
-        test_path = 'data/processed/test_bow.csv'
+        test_path = 'data/processed/test_tfidf.csv'
         model_path = 'models/model.pkl'
 
         x_test, y_test = read_test(test_path)
